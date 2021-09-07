@@ -14,50 +14,56 @@ SIMPLE_POINT_STRUCTURE = {
   1: ['A', 'D', 'G', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T', 'U', 'B', 'C', 'M', 'P', 'F', 'H', 'V', 'W', 'Y', 'K', 'J', 'X', 'Q', 'Z'],
 }
 
-VOWEL_BONUS_STRUCTURE = {
-    1: ['D', 'G','L', 'N', 'R', 'S', 'T', 'U', 'B', 'C', 'M', 'P', 'F', 'H', 'V', 'W', 'Y', 'K', 'J', 'X', 'Q', 'Z'],
+VOWEL_BONUS = {
+    # 1: ['D', 'G','L', 'N', 'R', 'S', 'T', 'U', 'B', 'C', 'M', 'P', 'F', 'H', 'V', 'W', 'Y', 'K', 'J', 'X', 'Q', 'Z'],
     3: ['A', 'E', "I", 'O', 'U']
 }
 
 
 def old_scrabble_scorer(word):
     word = word.upper()
-    letterPoints = ""
+    letterPoints = 0
 
     for char in word:
 
         for point_value in OLD_POINT_STRUCTURE:
 
             if char in OLD_POINT_STRUCTURE[point_value]:
-                letterPoints += 'Points for {char}: {point_value}\n'.format(char = char, point_value = point_value)
+                letterPoints += point_value
 
     return letterPoints
 
 def simple_scorer(word):
     word = word.upper()
-    letterPoints = ""
+    letterPoints = 0
 
     for char in word:
 
         for point_value in SIMPLE_POINT_STRUCTURE:
 
             if char in SIMPLE_POINT_STRUCTURE[point_value]:
-                letterPoints += 'Points for {char}: {point_value}\n'.format(char = char, point_value = point_value)
+                letterPoints += point_value
 
     return letterPoints
 
 def vowel_bonus_scorer(word):
     word = word.upper()
-    letterPoints = ""
+    vowels = "AEIOU"
+    letterPoints = 0
 
     for char in word:
 
-        for point_value in VOWEL_BONUS_STRUCTURE:
+        if char in vowels:
+            letterPoints += 3
+        else:
+            letterPoints += 1
 
-            if char in VOWEL_BONUS_STRUCTURE[point_value]:
-                letterPoints += 'Points for {char}: {point_value}\n'.format(char = char, point_value = point_value)
-
+    #      for point_value in VOWEL_BONUS:
+    #          if char in VOWEL_BONUS[point_value]:
+    #             letterPoints += point_value
+                
     return letterPoints
+        
 
 def scrabble_scorer(word):
     score = 0
@@ -93,20 +99,20 @@ new_point_structure = transform(OLD_POINT_STRUCTURE)
 simple_scorer_dict = {
     "name": "Simple",
     "description": "Each letter is worth 1 point",
-    "score function": simple_scorer
+    "score_function": simple_scorer
 }     
 
 vowel_bonus_scorer_dict = {
     "name": "Vowel Bonus",
     "description": "Each vowel is worth 3 points while constenants are worth 1 point",
-    "score function": vowel_bonus_scorer
+    "score_function": vowel_bonus_scorer
     
 }
 
 old_scrabble_scorer_dict = {
-    "name": "Old Scrabbe Score",
-    "Description": "Words are scored using the original Scrabble rules",
-    "score function": scrabble_scorer
+    "name": "Old Scrabbe Scorer",
+    "description": "Words are scored using the original Scrabble rules",
+    "score_function": scrabble_scorer
 }
 
 scoring_algorithms = ( old_scrabble_scorer_dict, simple_scorer_dict, vowel_bonus_scorer_dict
@@ -131,12 +137,11 @@ def run_program():
    
     selected_score_algorithm_dict = scorer_prompt()
 
-    score = selected_score_algorithm_dict['score_function'](word)
+    score = selected_score_algorithm_dict["score_function"](word)
 
-    print(
-        f'''
-        The word you entered was "{word}".
-        You selected the "{selected_score_algorithm_dict['name']}" scoring algorithm which {selected_score_algorithm_dict['description']}.
-        Your score is {score}!'''
+    print(f'''
+The word you entered was "{word}".
+You selected the "{selected_score_algorithm_dict['name']}" scoring algorithm which {selected_score_algorithm_dict['description']}.
+Your score is {score}!'''
     )
 
